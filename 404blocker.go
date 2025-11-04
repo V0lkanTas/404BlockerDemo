@@ -233,7 +233,7 @@ func (t *IP404Tracker) BannedRequestCounter(clientIP string) {
 
 // startBannedRequestLogger prints banned request counts to stdout every hour
 func (t *IP404Tracker) startBannedRequestLogger() {
-	ticker := time.NewTicker(1 * time.Hour)
+	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
 	for range ticker.C {
