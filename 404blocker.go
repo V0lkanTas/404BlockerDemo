@@ -261,6 +261,7 @@ func (t *IP404Tracker) Middleware() gin.HandlerFunc {
 		if t.IsBanned(clientIP) {
 			// For shadow banning, we don't tell the client they're banned
 			// Instead, we just serve a generic 404 response
+			t.BannedRequestCounter(clientIP)
 			c.Status(404)
 			c.Abort()
 			return
