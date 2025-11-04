@@ -68,37 +68,11 @@ func (t *IP404Tracker) initializeWhitelist() {
 	}
 }
 
-// AddToWhitelist adds an IP to the whitelist
-func (t *IP404Tracker) AddToWhitelist(ip string) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.whitelist[ip] = true
-}
-
-// RemoveFromWhitelist removes an IP from the whitelist
-func (t *IP404Tracker) RemoveFromWhitelist(ip string) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	delete(t.whitelist, ip)
-}
-
 // IsWhitelisted checks if an IP is in the whitelist
 func (t *IP404Tracker) IsWhitelisted(ip string) bool {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
 	return t.whitelist[ip]
-}
-
-// GetWhitelist returns a copy of the current whitelist
-func (t *IP404Tracker) GetWhitelist() []string {
-	t.mu.RLock()
-	defer t.mu.RUnlock()
-
-	var ips []string
-	for ip := range t.whitelist {
-		ips = append(ips, ip)
-	}
-	return ips
 }
 
 // cleanupLoop periodically removes expired entries to prevent memory leaks
@@ -199,13 +173,6 @@ func (t *IP404Tracker) IsBanned(ip string) bool {
 
 	banTime, exists := t.bannedUntil[ip]
 	return exists && banTime.After(now)
-}
-
-// UnbanIP manually removes an IP from the ban list (useful for admin functions)
-func (t *IP404Tracker) UnbanIP(ip string) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	delete(t.bannedUntil, ip)
 }
 
 // GetBannedIPs returns a map of currently banned IPs and their ban expiry times
