@@ -5,6 +5,7 @@ This is a great way of increasing difficulty on others trying to understand your
 
 # Example Usage
 
+```
 func main() {
 
 	// Initialize 404 Limiter Middleware
@@ -23,7 +24,7 @@ func main() {
 	// Start Server
 	router.Run(":8080")
 }
-
+```
 
 # Example Tests
 ## Test 1
