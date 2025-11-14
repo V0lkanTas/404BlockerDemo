@@ -219,6 +219,22 @@ func (t *IP404Tracker) startBannedRequestLogger() {
 	}
 }
 
+// ExtendBan extends the ban duration for an IP to the full ban duration from now
+// This is used to implement rolling bans where continued attempts reset the timer
+func (t *IP404Tracker) ExtendBan(ip string) {
+	// Don't extend bans for whitelisted IPs (they shouldn't be banned anyway)
+	if t.IsWhitelisted(ip) {
+		return
+	}
+
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	// Extend the ban to the full duration from now
+	newBanTime := time.Now().Add(t.banDuration)
+	t.bannedUntil[ip] = newBanTime
+}
+
 // Middleware returns a Gin middleware that tracks 404s and shadow bans IPs
 func (t *IP404Tracker) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -226,9 +242,11 @@ func (t *IP404Tracker) Middleware() gin.HandlerFunc {
 
 		// Check if the IP is already banned (whitelisted IPs will return false)
 		if t.IsBanned(clientIP) {
+			t.ExtendBan(clientIP)
+			t.BannedRequestCounter(clientIP)
+
 			// For shadow banning, we don't tell the client they're banned
 			// Instead, we just serve a generic 404 response
-			t.BannedRequestCounter(clientIP)
 			c.Status(404)
 			c.Abort()
 			return
