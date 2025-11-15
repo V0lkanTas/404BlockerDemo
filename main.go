@@ -18,6 +18,9 @@ func main() {
 	// Prepare router
 	router := gin.Default()
 
+	// CIDR Blocker
+	router.Use(tracker.Middleware())
+
 	// 404 Limiter Middleware
 	router.Use(tracker.Middleware())
 
