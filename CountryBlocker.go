@@ -11,11 +11,9 @@ var blockedCIDRs []*net.IPNet
 // InitBlockedCountries loads CIDR blocks at startup
 func InitBlockedCountries() {
 	cidrs := []string{
-		// China Unicom
-		"220.192.0.0/12",
-
-		// Internet Census Group
-		"185.226.197.0/24",
+		"220.192.0.0/12",   // China Unicom
+		"103.55.129.0/24",  // Powerline HK
+		"185.226.197.0/24", // Internet Census Group - Netherlands
 
 		// Add more Chinese blocks here
 		// "218.0.0.0/8",
